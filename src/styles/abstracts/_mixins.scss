@@ -1,0 +1,50 @@
+@use "sass:map";
+@use "variables" as *;
+
+@mixin button-base {
+  padding: 0.5rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: 0.375rem;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  font-weight: 500;
+  color: $text-color;
+
+  @media (max-width: map.get($breakpoints, "sm")) {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  &:hover {
+    background-color: $hover-color;
+    border-color: darken($border-color, 5%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($selected-bg-color, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin fluid-typography($min-size, $max-size) {
+  font-size: clamp(
+    $min-size,
+    calc(
+      $min-size + ($max-size - $min-size) * ((100vw - 320px) / (1200 - 320))
+    ),
+    $max-size
+  );
+}

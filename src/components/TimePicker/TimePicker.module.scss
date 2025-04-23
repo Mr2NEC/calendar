@@ -1,0 +1,55 @@
+@use "../../styles/abstracts" as *;
+
+.time-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $text-primary;
+  }
+
+  .required {
+    color: $error-color;
+    margin-left: 0.25rem;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &-separator {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+.error-message {
+  font-size: 0.75rem;
+  color: $error-color;
+  margin-top: 0.25rem;
+}

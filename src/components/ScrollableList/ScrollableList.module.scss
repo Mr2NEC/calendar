@@ -1,0 +1,66 @@
+@use "sass:map";
+@use "../../styles/abstracts" as *;
+
+.scrollable-list {
+  position: relative;
+  height: 120px;
+  width: 60px;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-default;
+  background-color: $background-color;
+  transition: $transition-default;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+
+  &-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+  }
+
+  &-item {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: $secondary-text-color;
+    cursor: pointer;
+    transition: $transition-default;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, color, background-color;
+    opacity: $disabled-opacity;
+    transform: scale(0.8);
+
+    &.selected {
+      color: $text-color;
+      font-weight: 500;
+      background-color: $hover-color;
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    &.prev,
+    &.next {
+      opacity: $disabled-opacity;
+      transform: scale(0.8);
+    }
+
+    &:hover {
+      background-color: $hover-color;
+      color: $text-color;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}

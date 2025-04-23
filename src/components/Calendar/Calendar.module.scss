@@ -1,0 +1,181 @@
+@use "sass:map";
+@use "../../styles/abstracts" as *;
+
+.calendar {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border: 1px solid $border-color;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: map.get($breakpoints, "sm")) {
+    max-width: 100%;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  &-header {
+    padding: 1rem;
+    border-bottom: 1px solid $border-color;
+    background-color: $background-color;
+    flex-shrink: 0;
+
+    @media (max-width: map.get($breakpoints, "sm")) {
+      padding: 0.75rem;
+    }
+
+    &-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      min-width: 0;
+
+      @media (max-width: map.get($breakpoints, "sm")) {
+        gap: 0.25rem;
+      }
+
+      span {
+        font-weight: 600;
+        color: $text-color;
+        @include fluid-typography(1rem, 1.25rem);
+        text-align: center;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  &-body {
+    padding: 1rem;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+
+    @media (max-width: map.get($breakpoints, "sm")) {
+      padding: 0.75rem;
+    }
+
+    &-grid {
+      display: grid;
+      gap: 0.5rem;
+      min-width: 0;
+
+      @media (max-width: map.get($breakpoints, "sm")) {
+        gap: 0.25rem;
+      }
+
+      &.days {
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      &.months {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      &.years {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  }
+
+  &-weekday {
+    text-align: center;
+    font-weight: 500;
+    color: $secondary-text-color;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @media (max-width: map.get($breakpoints, "sm")) {
+      padding: 0.25rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  &-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    color: $text-color;
+    font-weight: 500;
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+
+    @media (max-width: map.get($breakpoints, "sm")) {
+      min-height: 2.5rem;
+    }
+
+    &:hover {
+      background-color: $hover-color;
+      transform: scale(1.05);
+    }
+
+    &-other-month {
+      color: $secondary-text-color;
+      opacity: 0.5;
+    }
+
+    &-today {
+      background-color: $today-bg-color;
+      color: $today-text-color;
+      font-weight: 600;
+    }
+
+    &-selected {
+      background-color: $selected-bg-color;
+      color: $selected-text-color;
+      font-weight: 600;
+    }
+
+    &-in-range {
+      background-color: $range-bg-color;
+      color: $range-text-color;
+    }
+
+    &-range-start,
+    &-range-end {
+      background-color: $selected-bg-color;
+      color: $selected-text-color;
+      font-weight: 600;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  &-footer {
+    padding: 1rem;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    background-color: $background-color;
+    flex-shrink: 0;
+    align-items: center;
+
+    @media (max-width: map.get($breakpoints, "sm")) {
+      padding: 0.75rem;
+    }
+  }
+}
