@@ -11,6 +11,7 @@ export interface CalendarContextProps {
   onDateSelect?: (date: Date) => void;
   onRangeSelect?: (startDate: Date | null, endDate: Date | null) => void;
   initialMode?: CalendarMode;
+  initialRange?: { start: Date; end: Date };
 }
 
 export interface CalendarContextReturn {
@@ -19,6 +20,8 @@ export interface CalendarContextReturn {
   mode: CalendarMode;
   rangeStart: Date | null;
   rangeEnd: Date | null;
+  timeStart: Date | null;
+  timeEnd: Date | null;
   goToNext: () => void;
   goToPrev: () => void;
   goToToday: () => void;
@@ -30,6 +33,8 @@ export interface CalendarContextReturn {
   onRangeSelect?: (startDate: Date | null, endDate: Date | null) => void;
   calendarType: CalendarType;
   setCalendarType: (calendarType: CalendarType) => void;
+  handleTimeStartChange: (date: Date) => void;
+  handleTimeEndChange: (date: Date) => void;
 }
 
 export interface CalendarProps extends CalendarContextProps {

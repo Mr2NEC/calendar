@@ -1,6 +1,6 @@
-@import-normalize;
+@use "./styles/abstracts/_normalize.scss" as *;
 
-.App {
+.container {
   display: flex;
   justify-content: center;
   align-items: center;

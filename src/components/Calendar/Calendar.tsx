@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { clsx } from "clsx";
 import { CALENDAR_MODE_MAP, CALENDAR_TYPE_MAP } from "./Calendar.constants";
 import { useCalendarContext } from "./CalendarProvider";
@@ -10,14 +10,14 @@ import {
   ArrowRight,
   CalendarToday,
   DateRange,
+  Check,
   SingleRange,
-  Time,
 } from "../icons";
 import { Button } from "../Button";
 import CalendarDays from "./CalendarDays";
 import CalendarMonths from "./CalendarMonths";
 import CalendarYears from "./CalendarYears";
-import TimePicker from "../TimePicker";
+import { TimePicker } from "../TimePicker";
 
 const Calendar = ({ className, children }: CalendarProps) => {
   return <div className={clsx(styles.calendar, className)}>{children}</div>;
@@ -27,14 +27,15 @@ Calendar.Header = memo(() => {
   const { goToPrev, goToNext, currentDate, setCalendarType, calendarType } =
     useCalendarContext();
 
+  const isTimePicker =
+    calendarType === CALENDAR_TYPE_MAP.TIME_START ||
+    calendarType === CALENDAR_TYPE_MAP.TIME_END;
+
   return (
     <div className={styles["calendar-header"]}>
       <div className={styles["calendar-header-content"]}>
         <CircleIconButton
-          disabled={
-            calendarType === CALENDAR_TYPE_MAP.MONTHS ||
-            calendarType === CALENDAR_TYPE_MAP.TIME
-          }
+          disabled={calendarType === CALENDAR_TYPE_MAP.MONTHS || isTimePicker}
           variant="outline"
           icon={<ArrowLeft />}
           aria-label="Previous month"
@@ -43,6 +44,7 @@ Calendar.Header = memo(() => {
         <div className={styles["calendar-header-content-buttons"]}>
           <Button
             variant="secondary"
+            disabled={calendarType === CALENDAR_TYPE_MAP.MONTHS}
             onClick={() => setCalendarType(CALENDAR_TYPE_MAP.MONTHS)}
           >
             {currentDate.toLocaleString("en", {
@@ -51,6 +53,7 @@ Calendar.Header = memo(() => {
           </Button>
           <Button
             variant="secondary"
+            disabled={calendarType === CALENDAR_TYPE_MAP.YEARS}
             onClick={() => setCalendarType(CALENDAR_TYPE_MAP.YEARS)}
           >
             {currentDate.toLocaleString("en", {
@@ -60,10 +63,7 @@ Calendar.Header = memo(() => {
         </div>
 
         <CircleIconButton
-          disabled={
-            calendarType === CALENDAR_TYPE_MAP.MONTHS ||
-            calendarType === CALENDAR_TYPE_MAP.TIME
-          }
+          disabled={calendarType === CALENDAR_TYPE_MAP.MONTHS || isTimePicker}
           variant="outline"
           icon={<ArrowRight />}
           aria-label="Next month"
@@ -81,41 +81,156 @@ Calendar.Body = memo(() => {
       {calendarType === CALENDAR_TYPE_MAP.DAYS && <CalendarDays />}
       {calendarType === CALENDAR_TYPE_MAP.MONTHS && <CalendarMonths />}
       {calendarType === CALENDAR_TYPE_MAP.YEARS && <CalendarYears />}
-      {calendarType === CALENDAR_TYPE_MAP.TIME && <TimePicker />}
+      {(calendarType === CALENDAR_TYPE_MAP.TIME_START ||
+        calendarType === CALENDAR_TYPE_MAP.TIME_END) && <Calendar.TimePicker />}
     </div>
   );
 });
 
 Calendar.Footer = memo(() => {
-  const { setCalendarType, goToToday, toggleMode, mode } = useCalendarContext();
+  const { goToToday, toggleMode, mode } = useCalendarContext();
 
   return (
     <div className={styles["calendar-footer"]}>
-      <CircleIconButton
-        variant="outline"
-        onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME)}
-        icon={<Time />}
-        aria-label="Set time"
-      />
-      <CircleIconButton
-        variant="outline"
-        onClick={goToToday}
-        icon={<CalendarToday />}
-        aria-label="Go to today"
-      />
-      <CircleIconButton
-        variant="outline"
-        onClick={toggleMode}
-        icon={
-          mode === CALENDAR_MODE_MAP.SINGLE ? <DateRange /> : <SingleRange />
-        }
-        aria-label={
-          mode === CALENDAR_MODE_MAP.SINGLE
-            ? "Toggle range mode"
-            : "Toggle single mode"
-        }
+      <div className={styles["calendar-footer-time-picker-buttons"]}>
+        <Calendar.TimePickerButtons />
+      </div>
+      <div className={styles["calendar-footer-buttons"]}>
+        <CircleIconButton
+          variant="outline"
+          onClick={goToToday}
+          icon={<CalendarToday />}
+          aria-label="Go to today"
+        />
+        <CircleIconButton
+          variant="outline"
+          onClick={toggleMode}
+          icon={
+            mode === CALENDAR_MODE_MAP.SINGLE ? <DateRange /> : <SingleRange />
+          }
+          aria-label={
+            mode === CALENDAR_MODE_MAP.SINGLE
+              ? "Toggle range mode"
+              : "Toggle single mode"
+          }
+        />
+      </div>
+    </div>
+  );
+});
+
+Calendar.TimePicker = memo(() => {
+  const {
+    calendarType,
+    timeStart,
+    timeEnd,
+    handleTimeStartChange,
+    handleTimeEndChange,
+  } = useCalendarContext();
+
+  const currentTime = useMemo(() => {
+    return calendarType === CALENDAR_TYPE_MAP.TIME_START ? timeStart : timeEnd;
+  }, [calendarType, timeStart, timeEnd]);
+
+  const onTimeChange = useCallback(
+    (time: Date) => {
+      if (calendarType === CALENDAR_TYPE_MAP.TIME_START) {
+        handleTimeStartChange(time);
+      } else {
+        handleTimeEndChange(time);
+      }
+    },
+    [calendarType, handleTimeStartChange, handleTimeEndChange]
+  );
+
+  return (
+    <div className={styles["calendar-time-picker"]}>
+      <TimePicker
+        key={calendarType}
+        initialTime={currentTime}
+        onTimeChange={onTimeChange}
       />
     </div>
+  );
+});
+
+Calendar.TimePickerButtons = memo(() => {
+  const {
+    selectedDate,
+    rangeStart,
+    rangeEnd,
+    timeStart,
+    timeEnd,
+    calendarType,
+    mode,
+    setCalendarType,
+  } = useCalendarContext();
+
+  const isTimeStart = calendarType === CALENDAR_TYPE_MAP.TIME_START;
+  const isTimeEnd = calendarType === CALENDAR_TYPE_MAP.TIME_END;
+
+  const onSubmit = useCallback(() => {
+    if (isTimeStart) {
+      setCalendarType(CALENDAR_TYPE_MAP.TIME_END);
+    } else {
+      setCalendarType(CALENDAR_TYPE_MAP.DAYS);
+    }
+  }, [calendarType, setCalendarType]);
+
+  return (
+    <>
+      <span>
+        {(mode === CALENDAR_MODE_MAP.SINGLE
+          ? selectedDate
+          : rangeStart
+        )?.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }) ?? "__/__/____"}
+      </span>
+
+      <Button
+        variant="outline"
+        disabled={isTimeStart}
+        onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_START)}
+        aria-label="Edit start time"
+      >
+        {timeStart?.toLocaleString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Button>
+      <span>-</span>
+      <span>
+        {(mode === CALENDAR_MODE_MAP.SINGLE
+          ? selectedDate
+          : rangeEnd
+        )?.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }) ?? "__/__/____"}
+      </span>
+      <Button
+        variant="outline"
+        disabled={isTimeEnd}
+        onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_END)}
+        aria-label="Edit end time"
+      >
+        {timeEnd?.toLocaleString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Button>
+      <CircleIconButton
+        disabled={!isTimeStart && !isTimeEnd}
+        variant="outline"
+        onClick={onSubmit}
+        icon={<Check />}
+        aria-label="Set time"
+      />
+    </>
   );
 });
 

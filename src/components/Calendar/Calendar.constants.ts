@@ -32,7 +32,8 @@ export const CALENDAR_TYPE_MAP = {
   DAYS: "days",
   MONTHS: "months",
   YEARS: "years",
-  TIME: "time",
+  TIME_START: "time-start",
+  TIME_END: "time-end",
 } as const;
 
 export const YEARS_PER_PAGE = 12;

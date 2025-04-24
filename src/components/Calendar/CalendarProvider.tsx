@@ -58,6 +58,51 @@ const CalendarProvider = ({
     useRange<Date | null>();
   const [rangeStart, rangeEnd] = range;
 
+  const getInitialTime = useCallback(() => {
+    const start = new Date();
+    start.setHours(0);
+    start.setMinutes(0);
+    const end = new Date();
+    end.setHours(23);
+    end.setMinutes(55);
+    return {
+      start,
+      end,
+    };
+  }, []);
+
+  const [time, , setTimeStart, setTimeEnd] = useRange<Date | null>(
+    getInitialTime()
+  );
+  const [timeStart, timeEnd] = time;
+
+  // const validateTime = useCallback(
+  //   (date: Date) => {
+  //     if (!timeStart || !timeEnd) {
+  //       return true;
+  //     }
+  //     return (
+  //       date.getTime() >= timeStart.getTime() &&
+  //       date.getTime() <= timeEnd.getTime()
+  //     );
+  //   },
+  //   [timeStart, timeEnd]
+  // );
+
+  const handleTimeStartChange = useCallback(
+    (date: Date) => {
+      setTimeStart(date);
+    },
+    [setTimeStart]
+  );
+
+  const handleTimeEndChange = useCallback(
+    (date: Date) => {
+      setTimeEnd(date);
+    },
+    [setTimeEnd]
+  );
+
   const handleCalendarTypeChange = useCallback((calendarType: CalendarType) => {
     setCalendarType(calendarType);
   }, []);
@@ -126,13 +171,13 @@ const CalendarProvider = ({
       mode,
       rangeStart,
       rangeEnd,
+      selectedDate,
       onDateSelect,
       onRangeSelect,
       setRange,
       setRangeStart,
       setRangeEnd,
       resetRange,
-      selectedDate,
     ]
   );
 
@@ -144,6 +189,11 @@ const CalendarProvider = ({
     [onRangeSelect, setRange]
   );
 
+  const goToToday = useCallback(() => {
+    setCurrentDate(new Date());
+    handleCalendarTypeChange(CALENDAR_TYPE_MAP.DAYS);
+  }, [handleCalendarTypeChange]);
+
   const value: CalendarContextReturn = {
     currentDate,
     selectedDate,
@@ -151,11 +201,13 @@ const CalendarProvider = ({
     rangeStart,
     rangeEnd,
     calendarType,
+    timeStart,
+    timeEnd,
     goToNext:
       calendarType === CALENDAR_TYPE_MAP.DAYS ? goToNextMonth : goToNextYears,
     goToPrev:
       calendarType === CALENDAR_TYPE_MAP.DAYS ? goToPrevMonth : goToPrevYears,
-    goToToday: () => selectCurrentDate(new Date()),
+    goToToday,
     selectCurrentDate,
     toggleMode,
     setSelectedDate: handleDateSelect,
@@ -163,6 +215,8 @@ const CalendarProvider = ({
     onDateSelect,
     onRangeSelect,
     setCalendarType: handleCalendarTypeChange,
+    handleTimeStartChange,
+    handleTimeEndChange,
   };
 
   return (

@@ -10,10 +10,13 @@ const CalendarComponent = ({
   return (
     <CalendarProvider {...props}>
       <Calendar className={className}>
-        <Calendar.Header />
-        <Calendar.Body />
-        <Calendar.Footer />
-        {children}
+        {children || (
+          <>
+            <Calendar.Header />
+            <Calendar.Body />
+            <Calendar.Footer />
+          </>
+        )}
       </Calendar>
     </CalendarProvider>
   );
