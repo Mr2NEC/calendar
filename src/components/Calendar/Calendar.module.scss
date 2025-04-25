@@ -34,7 +34,6 @@
 
     &-content {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       gap: 0.25rem;
       min-width: 0;
@@ -46,6 +45,9 @@
       &-buttons {
         display: flex;
         gap: 0.25rem;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
 
         @media (min-width: map.get($breakpoints, "sm")) {
           gap: 0.5rem;
