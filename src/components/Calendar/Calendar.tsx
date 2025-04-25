@@ -1,8 +1,12 @@
 import { memo, useCallback, useMemo } from "react";
 import { clsx } from "clsx";
-import { CALENDAR_MODE_MAP, CALENDAR_TYPE_MAP } from "./Calendar.constants";
+import {
+  CALENDAR_MODE_MAP,
+  CALENDAR_TYPE_MAP,
+  DATE_FORMAT_TEMPLATE,
+} from "./Calendar.constants";
 import { useCalendarContext } from "./CalendarProvider";
-import styles from "./Calendar.module.scss";
+
 import { CalendarProps } from "./Calendar.types";
 import { CircleIconButton } from "../Button";
 import {
@@ -18,7 +22,7 @@ import CalendarDays from "./CalendarDays";
 import CalendarMonths from "./CalendarMonths";
 import CalendarYears from "./CalendarYears";
 import { TimePicker } from "../TimePicker";
-
+import styles from "./Calendar.module.scss";
 const Calendar = ({ className, children }: CalendarProps) => {
   return <div className={clsx(styles.calendar, className)}>{children}</div>;
 };
@@ -92,9 +96,7 @@ Calendar.Footer = memo(() => {
 
   return (
     <div className={styles["calendar-footer"]}>
-      <div className={styles["calendar-footer-time-picker-buttons"]}>
-        <Calendar.TimePickerButtons />
-      </div>
+      <Calendar.TimePickerButtons />
       <div className={styles["calendar-footer-buttons"]}>
         <CircleIconButton
           variant="outline"
@@ -169,7 +171,7 @@ Calendar.TimePickerButtons = memo(() => {
   const isTimeStart = calendarType === CALENDAR_TYPE_MAP.TIME_START;
   const isTimeEnd = calendarType === CALENDAR_TYPE_MAP.TIME_END;
 
-  const onSubmit = useCallback(() => {
+  const onSubmitTime = useCallback(() => {
     if (isTimeStart) {
       setCalendarType(CALENDAR_TYPE_MAP.TIME_END);
     } else {
@@ -178,59 +180,62 @@ Calendar.TimePickerButtons = memo(() => {
   }, [calendarType, setCalendarType]);
 
   return (
-    <>
-      <span>
-        {(mode === CALENDAR_MODE_MAP.SINGLE
-          ? selectedDate
-          : rangeStart
-        )?.toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }) ?? "__/__/____"}
-      </span>
-
-      <Button
-        variant="outline"
-        disabled={isTimeStart}
-        onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_START)}
-        aria-label="Edit start time"
-      >
-        {timeStart?.toLocaleString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </Button>
+    <div className={styles["calendar-footer-time-picker-buttons"]}>
+      <div className={styles["calendar-footer-time-picker-buttons-button"]}>
+        <span>
+          {(mode === CALENDAR_MODE_MAP.SINGLE
+            ? selectedDate
+            : rangeStart
+          )?.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }) ?? DATE_FORMAT_TEMPLATE}
+        </span>
+        <Button
+          variant="outline"
+          disabled={isTimeStart}
+          onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_START)}
+          aria-label="Edit start time"
+        >
+          {timeStart?.toLocaleString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Button>
+      </div>
       <span>-</span>
-      <span>
-        {(mode === CALENDAR_MODE_MAP.SINGLE
-          ? selectedDate
-          : rangeEnd
-        )?.toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }) ?? "__/__/____"}
-      </span>
-      <Button
-        variant="outline"
-        disabled={isTimeEnd}
-        onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_END)}
-        aria-label="Edit end time"
-      >
-        {timeEnd?.toLocaleString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </Button>
+      <div className={styles["calendar-footer-time-picker-buttons-button"]}>
+        <span>
+          {(mode === CALENDAR_MODE_MAP.SINGLE
+            ? selectedDate
+            : rangeEnd
+          )?.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }) ?? DATE_FORMAT_TEMPLATE}
+        </span>
+        <Button
+          variant="outline"
+          disabled={isTimeEnd}
+          onClick={() => setCalendarType(CALENDAR_TYPE_MAP.TIME_END)}
+          aria-label="Edit end time"
+        >
+          {timeEnd?.toLocaleString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Button>
+      </div>
       <CircleIconButton
         disabled={!isTimeStart && !isTimeEnd}
         variant="outline"
-        onClick={onSubmit}
+        onClick={onSubmitTime}
         icon={<Check />}
         aria-label="Set time"
       />
-    </>
+    </div>
   );
 });
 

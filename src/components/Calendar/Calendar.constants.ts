@@ -38,3 +38,4 @@ export const CALENDAR_TYPE_MAP = {
 
 export const YEARS_PER_PAGE = 12;
 export const YEARS_RANGE = 5;
+export const DATE_FORMAT_TEMPLATE = "__/__/____";

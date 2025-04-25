@@ -76,31 +76,42 @@ const CalendarProvider = ({
   );
   const [timeStart, timeEnd] = time;
 
-  // const validateTime = useCallback(
-  //   (date: Date) => {
-  //     if (!timeStart || !timeEnd) {
-  //       return true;
-  //     }
-  //     return (
-  //       date.getTime() >= timeStart.getTime() &&
-  //       date.getTime() <= timeEnd.getTime()
-  //     );
-  //   },
-  //   [timeStart, timeEnd]
-  // );
+  const validateTime = useCallback(
+    (date: Date) => {
+      if (!timeStart || !timeEnd) {
+        return true;
+      }
+      return (
+        date.getTime() >= timeStart.getTime() &&
+        date.getTime() <= timeEnd.getTime()
+      );
+    },
+    [timeStart, timeEnd]
+  );
+
+  const validateDateTime = useCallback(
+    (date: Date) => {
+      return mode !== CALENDAR_MODE_MAP.SINGLE || validateTime(date);
+    },
+    [validateTime, mode]
+  );
 
   const handleTimeStartChange = useCallback(
     (date: Date) => {
-      setTimeStart(date);
+      if (validateDateTime(date)) {
+        setTimeStart(date);
+      }
     },
-    [setTimeStart]
+    [setTimeStart, validateDateTime]
   );
 
   const handleTimeEndChange = useCallback(
     (date: Date) => {
-      setTimeEnd(date);
+      if (validateDateTime(date)) {
+        setTimeEnd(date);
+      }
     },
-    [setTimeEnd]
+    [setTimeEnd, validateDateTime]
   );
 
   const handleCalendarTypeChange = useCallback((calendarType: CalendarType) => {
