@@ -64,6 +64,7 @@ Calendar.Header = memo(() => {
               year: "numeric",
             })}
           </Button>
+          <Calendar.SettingsButtons />
         </div>
 
         <CircleIconButton
@@ -92,31 +93,9 @@ Calendar.Body = memo(() => {
 });
 
 Calendar.Footer = memo(() => {
-  const { goToToday, toggleMode, mode } = useCalendarContext();
-
   return (
     <div className={styles["calendar-footer"]}>
       <Calendar.TimePickerButtons />
-      <div className={styles["calendar-footer-buttons"]}>
-        <CircleIconButton
-          variant="outline"
-          onClick={goToToday}
-          icon={<CalendarToday />}
-          aria-label="Go to today"
-        />
-        <CircleIconButton
-          variant="outline"
-          onClick={toggleMode}
-          icon={
-            mode === CALENDAR_MODE_MAP.SINGLE ? <DateRange /> : <SingleRange />
-          }
-          aria-label={
-            mode === CALENDAR_MODE_MAP.SINGLE
-              ? "Toggle range mode"
-              : "Toggle single mode"
-          }
-        />
-      </div>
     </div>
   );
 });
@@ -180,8 +159,8 @@ Calendar.TimePickerButtons = memo(() => {
   }, [calendarType, setCalendarType]);
 
   return (
-    <div className={styles["calendar-footer-time-picker-buttons"]}>
-      <div className={styles["calendar-footer-time-picker-buttons-button"]}>
+    <div className={styles["calendar-time-picker-buttons"]}>
+      <div className={styles["calendar-time-picker-buttons-button"]}>
         <span>
           {(mode === CALENDAR_MODE_MAP.SINGLE
             ? selectedDate
@@ -205,7 +184,7 @@ Calendar.TimePickerButtons = memo(() => {
         </Button>
       </div>
       <span>-</span>
-      <div className={styles["calendar-footer-time-picker-buttons-button"]}>
+      <div className={styles["calendar-time-picker-buttons-button"]}>
         <span>
           {(mode === CALENDAR_MODE_MAP.SINGLE
             ? selectedDate
@@ -234,6 +213,33 @@ Calendar.TimePickerButtons = memo(() => {
         onClick={onSubmitTime}
         icon={<Check />}
         aria-label="Set time"
+      />
+    </div>
+  );
+});
+
+Calendar.SettingsButtons = memo(() => {
+  const { goToToday, toggleMode, mode } = useCalendarContext();
+
+  return (
+    <div className={styles["calendar-settings-buttons"]}>
+      <CircleIconButton
+        variant="outline"
+        onClick={goToToday}
+        icon={<CalendarToday />}
+        aria-label="Go to today"
+      />
+      <CircleIconButton
+        variant="outline"
+        onClick={toggleMode}
+        icon={
+          mode === CALENDAR_MODE_MAP.SINGLE ? <DateRange /> : <SingleRange />
+        }
+        aria-label={
+          mode === CALENDAR_MODE_MAP.SINGLE
+            ? "Toggle range mode"
+            : "Toggle single mode"
+        }
       />
     </div>
   );
