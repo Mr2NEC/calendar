@@ -41,6 +41,4 @@ const CalendarMonths = memo(() => {
   );
 });
 
-CalendarMonths.displayName = "CalendarMonths";
-
 export default CalendarMonths;

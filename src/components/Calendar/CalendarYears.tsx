@@ -47,6 +47,4 @@ const CalendarYears = memo(() => {
   );
 });
 
-CalendarYears.displayName = "CalendarYears";
-
 export default CalendarYears;
