@@ -71,7 +71,7 @@ const CalendarProvider = ({
     };
   }, []);
 
-  const [time, , setTimeStart, setTimeEnd] = useRange<Date | null>(
+  const [time, setTime, setTimeStart, setTimeEnd] = useRange<Date | null>(
     getInitialTime()
   );
   const [timeStart, timeEnd] = time;
@@ -160,12 +160,22 @@ const CalendarProvider = ({
         if (rangeStart || rangeEnd) {
           resetRange();
         }
+
+        if (timeStart || timeEnd) {
+          setTime(getInitialTime());
+        }
+
         setSelectedDate(date);
         onDateSelect?.(date);
       } else {
         if (selectedDate) {
           setSelectedDate(null);
         }
+
+        if (timeStart || timeEnd) {
+          setTime(getInitialTime());
+        }
+
         if (!rangeStart || (rangeStart && rangeEnd)) {
           setRangeStart(date);
           setRangeEnd(null);
@@ -183,12 +193,16 @@ const CalendarProvider = ({
       rangeStart,
       rangeEnd,
       selectedDate,
+      timeStart,
+      timeEnd,
       onDateSelect,
       onRangeSelect,
       setRange,
       setRangeStart,
       setRangeEnd,
       resetRange,
+      setTime,
+      getInitialTime,
     ]
   );
 
