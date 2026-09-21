@@ -1,54 +1,61 @@
-# React + TypeScript + Vite
+# Calendar - date and time range picker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A date and time range picker built from scratch in React and TypeScript, with no UI component libraries. The only runtime dependency beyond React is `date-fns`.
 
-Currently, two official plugins are available:
+**Live demo:** https://calendar-taupe-seven.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Three navigation levels: days, months and years
+- Single-date and date-range selection modes, switchable on the fly
+- Start and end time pickers with range validation
+- "Today" shortcut that returns to the day view
+- Highlighting for today, the selected date, range boundaries, days inside the range and days from adjacent months
+- A fixed 6-week grid, so the calendar height never jumps between months
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Technical highlights
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+**Compound components.** `Calendar` exposes its parts as `Calendar.Header`, `Calendar.Body`, `Calendar.Footer`, `Calendar.TimePicker` and `Calendar.SettingsButtons`. Consumers assemble the calendar from parts, state flows through context, and every part is memoized.
+
+**Circular scroll picker on native events.** The time picker reacts to the mouse wheel and touch gestures through native `wheel`, `touchstart`, `touchmove` and `touchend` listeners registered with `{ passive: false }`. React synthetic events cannot call `preventDefault` on a passive wheel listener, so the page would scroll underneath. The list wraps around infinitely, uses a drag threshold to ignore finger jitter and renders only three visible items.
+
+**Generic hooks.** `useRange<T>` returns a tuple of the range and its setters, and is reused for both the date range and the time range.
+
+**Design tokens.** Colours, breakpoints, button sizes, radii and focus styles live in SCSS variables and mixins; every component has its own SCSS module.
+
+## Stack
+
+React 19, TypeScript, Vite, SCSS modules, date-fns, clsx, ESLint.
+
+## Project structure
+
+Each component is a folder that keeps everything about it together:
+
+```
+src/components/Calendar/
+  Calendar.tsx            component and its compound parts
+  CalendarProvider.tsx    context and state
+  CalendarDays.tsx        day view
+  CalendarMonths.tsx      month view
+  CalendarYears.tsx       year view
+  Calendar.types.ts       types
+  Calendar.utils.ts       pure date functions
+  Calendar.constants.ts   constants
+  Calendar.module.scss    styles
+  index.tsx               public export
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
+npm run dev
 ```
+
+Build for production with `npm run build`.
+
+## Possible improvements
+
+- Unit tests for the pure functions in `Calendar.utils.ts`
+- Keyboard navigation across dates and ARIA grid roles
+- Locale-aware month and date formatting
