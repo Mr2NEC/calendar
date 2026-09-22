@@ -4,6 +4,8 @@ A date and time range picker built from scratch in React and TypeScript, with no
 
 **Live demo:** https://calendar-taupe-seven.vercel.app
 
+![Calendar with a selected date range](docs/screenshot.png)
+
 ## Features
 
 - Three navigation levels: days, months and years
@@ -59,3 +61,7 @@ Build for production with `npm run build`.
 - Unit tests for the pure functions in `Calendar.utils.ts`
 - Keyboard navigation across dates and ARIA grid roles
 - Locale-aware month and date formatting
+
+## Author
+
+Vladyslav Shpylka - [LinkedIn](https://www.linkedin.com/in/vshpylka/) · [GitHub](https://github.com/Mr2NEC)
